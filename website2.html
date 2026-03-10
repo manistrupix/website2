@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sleek Portfolio | Photographer & Designer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- SLEEK DARK GRAY & BLUISH PALETTE --- */
+        :root {
+            --bg-main: #18181B;
+            --surface: #27272A;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --accent: #60A5FA;
+            --border-light: #3F3F46;
+        }
+
+        /* --- GLOBAL, CURSOR & GRID --- */
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-primary);
+            background-color: var(--bg-main);
+            background-image: radial-gradient(var(--border-light) 1px, transparent 1px);
+            background-size: 30px 30px;
+            cursor: none; overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+        }
+
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 9998; opacity: 0.04;
+            background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* --- SIDE CUTOUT IMAGES --- */
+        .side-cutout {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 65vh;
+            width: auto;
+            z-index: -1;
+            opacity: 0.7;
+            pointer-events: none;
+            filter: drop-shadow(0 0 20px rgba(0,0,0,0.5));
+        }
+        .side-cutout.left { left: -50px; }
+        .side-cutout.right { right: -50px; }
+
+        /* --- SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); border-left: 1px solid var(--border-light); }
+        ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+        .fade-in-section { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; will-change: opacity, visibility; }
+        .fade-in-section.is-visible { opacity: 1; transform: none; }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot, .cursor-outline { position: fixed; top: 0; left: 0; transform: translate(-50%, -50%); border-radius: 50%; z-index: 9999; pointer-events: none; }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--accent); }
+        .cursor-outline { width: 40px; height: 40px; border: 2px solid rgba(96, 165, 250, 0.5); transition: width 0.2s, height 0.2s, background-color 0.2s; }
+        .cursor-outline.hovering { width: 60px; height: 60px; background-color: rgba(96, 165, 250, 0.1); border-color: var(--accent); }
+
+        /* --- MENU --- */
+        nav {
+            background-color: rgba(39, 39, 42, 0.85); backdrop-filter: blur(12px);
+            padding: 15px 0; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            margin-bottom: 30px; border-bottom: 1px solid var(--border-light);
+        }
+        nav ul { list-style: none; padding: 0; margin: 0; display: flex; justify-content: center; gap: 15px; }
+        nav a {
+            display: inline-block; text-decoration: none; color: var(--text-secondary);
+            font-weight: 800; font-size: 1.1rem; padding: 10px 25px; border-radius: 30px;
+            transition: all 0.3s ease, transform 0.2s ease-out; border: 1px solid transparent; cursor: none;
+        }
+        nav a:hover, nav a.active-link { background-color: var(--text-primary); color: var(--bg-main); box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1); }
+
+        /* --- LAYOUT --- */
+        main { max-width: 1200px; margin: 0 auto; padding: 0 20px 60px; flex-grow: 1; position: relative; z-index: 10; }
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+        @keyframes popIn { 0% { opacity: 0; transform: scale(0.98) translateY(15px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .heading-container { text-align: center; margin: 40px 0; }
+        h2 {
+            display: inline-block; background-color: var(--surface); color: var(--text-primary);
+            padding: 12px 40px; border-radius: 50px; margin: 0; font-size: 1.8rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 1.5px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); border: 1px solid var(--border-light);
+        }
+
+        /* --- HOME --- */
+        .slideshow-container { width: 100%; height: 500px; position: relative; border-radius: 30px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); margin-bottom: 50px; border: 1px solid var(--border-light); }
+        .slide { width: 100%; height: 100%; object-fit: cover; position: absolute; opacity: 0; transition: opacity 0.8s ease-in-out, transform 3s ease-out; transform: scale(1.05); }
+        .slide.active-slide { opacity: 1; transform: scale(1); }
+        .three-columns { display: flex; gap: 30px; flex-wrap: wrap; }
+        .column { flex: 1; min-width: 280px; background: var(--surface); padding: 25px; border-radius: 25px; text-align: center; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease; border: 1px solid var(--border-light); }
+        .column:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4); border-color: var(--accent); }
+        .column img { width: 100%; height: 220px; object-fit: cover; border-radius: 15px; margin-bottom: 20px; }
+        .column p { line-height: 1.6; font-size: 1rem; font-weight: 600; color: var(--text-secondary); }
+
+        /* --- GALLERIES --- */
+        .modern-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); grid-gap: 25px; grid-auto-rows: 300px; }
+        .gallery-item { position: relative; overflow: hidden; border-radius: 20px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); border: 1px solid var(--border-light); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; cursor: none; }
+        .gallery-item:hover { box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5); border-color: var(--accent); z-index: 10; transform: scale(1.02); }
+        .gallery-item:hover img { transform: scale(1.08); }
+        .modern-gallery .gallery-item:nth-child(even) { grid-row: span 2; }
+        .gallery-overlay { position: absolute; bottom: -80px; left: 0; width: 100%; padding: 20px; box-sizing: border-box; background: rgba(24, 24, 27, 0.7); backdrop-filter: blur(8px); color: var(--text-primary); font-weight: 800; font-size: 1.1rem; text-align: center; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; border-top: 1px solid rgba(255,255,255,0.1); }
+        .gallery-item:hover .gallery-overlay { bottom: 0; }
+
+        /* --- CONTACT --- */
+        .contact-layout { display: flex; background: var(--surface); border-radius: 30px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 10, 0, 0.3); flex-wrap: wrap; max-width: 900px; margin: 0 auto; border: 1px solid var(--border-light); }
+        .bio-section { flex: 1; padding: 50px 30px; background-color: var(--border-light); color: var(--text-primary); text-align: center; min-width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .bio-section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(24, 24, 27, 0.7) 0%, transparent 100%); z-index: 0; }
+        .bio-section > * { z-index: 1; }
+        #bio-image { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; border: 4px solid var(--accent); margin-bottom: 25px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); transition: all 0.3s ease; cursor: none; }
+        #bio-image:hover { transform: scale(1.05); }
+        .bio-section h3 { font-size: 1.8rem; margin: 0 0 15px 0; font-weight: 800; }
+        .bio-section p { line-height: 1.7; font-size: 1rem; color: #E4E4E7; }
+        .form-section { flex: 1.5; padding: 50px; min-width: 300px; background: var(--surface); }
+        form { display: flex; flex-direction: column; gap: 20px; }
+        input, textarea { width: 100%; padding: 16px; border: 1px solid var(--border-light); border-radius: 15px; font-family: 'Poppins', sans-serif; font-size: 1.05rem; box-sizing: border-box; outline: none; transition: all 0.3s; background-color: var(--bg-main); color: var(--text-primary); cursor: none;}
+        input:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.15); }
+        textarea { resize: vertical; min-height: 150px; }
+        button { background-color: var(--text-primary); color: var(--bg-main); border: none; padding: 16px; border-radius: 15px; font-family: 'Poppins', sans-serif; font-size: 1.1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: none; }
+        button:hover { background-color: var(--accent); color: var(--text-primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(96, 165, 250, 0.2); }
+
+        /* --- MARQUEE & FOOTER --- */
+        .marquee-container { width: 100%; overflow: hidden; white-space: nowrap; background: var(--accent); color: var(--bg-main); padding: 12px 0; font-weight: 900; font-size: 1.1rem; letter-spacing: 3px; text-transform: uppercase; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); display: flex; margin-top: 40px; }
+        .marquee-content { display: inline-block; animation: marquee 20s linear infinite; padding-left: 100%; }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        footer { background-color: var(--surface); text-align: center; padding: 30px 20px; color: var(--text-secondary); font-size: 0.9rem; position: relative; z-index: 10; }
+        footer a { color: var(--accent); text-decoration: none; font-weight: 600; cursor: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* --- LIGHTBOX MODAL --- */
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(24, 24, 27, 0.95); backdrop-filter: blur(8px); z-index: 10000; justify-content: center; align-items: center; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #lightbox img { max-width: 90%; max-height: 85vh; border-radius: 15px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); object-fit: contain; transform: scale(0.95); animation: popInLightbox 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popInLightbox { to { transform: scale(1); } }
+        #close-lightbox { position: absolute; top: 30px; right: 40px; color: var(--text-primary); font-size: 50px; font-weight: bold; transition: transform 0.3s ease, color 0.3s ease; user-select: none; opacity: 0.7; cursor: none; }
+        #close-lightbox:hover { opacity: 1; transform: scale(1.1) rotate(90deg); color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <img src="left-cutout.png" class="side-cutout left" alt="Left Art" onerror="this.style.display='none'">
+    <img src="angel1.png" class="side-cutout right" alt="Right Art" onerror="this.style.display='none'">
+
+    <nav>
+        <ul>
+            <li><a onclick="navigate('home')" id="link-home" class="active-link hoverable">Home</a></li>
+            <li><a onclick="navigate('photography')" id="link-photography" class="hoverable">Photography</a></li>
+            <li><a onclick="navigate('design')" id="link-design" class="hoverable">Design</a></li>
+            <li><a onclick="navigate('contact')" id="link-contact" class="hoverable">Contact</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="home" class="page-section active">
+            <div class="slideshow-container fade-in-section">
+                <img src="alexg-godsave.png" class="slide active-slide" alt="Slide 1">
+                <img src="alexg-trick.png" class="slide" alt="Slide 2">
+                <img src="hariphoto.png" class="slide" alt="Slide 3">
+                <img src="coolsnow.jpg" class="slide" alt="Slide 4">
+                <img src="mac-swimming.png" class="slide" alt="Slide 5">
+                <img src="boylife.png" class="slide" alt="Slide 6">
+                <img src="blastoff.png" class="slide" alt="Slide 7">
+                <img src="seasonschange.png" class="slide" alt="Slide 3">
+            </div>
+            <div class="heading-container fade-in-section"><h2>Featured Work</h2></div>
+            <div class="three-columns fade-in-section">
+                <div class="column hoverable"><img src="sunset.png" class="zoomable" alt="Feature 1"><p>Capturing raw emotion and turning fleeting moments into timeless visual stories.</p></div>
+                <div class="column hoverable"><img src="colours.png" class="zoomable" alt="Feature 2"><p>Designing bold, minimal, and highly functional digital experiences for the modern web.</p></div>
+                <div class="column hoverable"><img src="iloveyou.png" class="zoomable" alt="Feature 3"><p>Merging stark contrast with crisp typography to create brand identities with impact.</p></div>
+            </div>
+        </section>
+
+        <section id="photography" class="page-section">
+            <div class="heading-container"><h2>Photography</h2></div>
+            <div class="modern-gallery fade-in-section">
+                <div class="gallery-item hoverable"><img src="hariphoto.png" class="zoomable" alt="Gallery"><div class="gallery-overlay">Instagram Shoot</div></div>
+                <div class="gallery-item hoverable"><img src="seasonschange.png" class="zoomable" alt="Gallery"><div class="gallery-overlay">Seasons Change</div></div>
+                <div class="gallery-item hoverable"><img src="brutal.jpg" class="zoomable" alt="Gallery"><div class="gallery-overlay">Brutal Structure</div></div>
+                <div class="gallery-item hoverable"><img src="coolsnow.jpg" class="zoomable" alt="Gallery"><div class="gallery-overlay">Snowy Peace</div></div>
+                <div class="gallery-item hoverable"><img src="bigpole.png" class="zoomable" alt="Gallery"><div class="gallery-overlay">Towering Alone</div></div>
+                <div class="gallery-item hoverable"><img src="blastoff.png" class="zoomable" alt="Gallery"><div class="gallery-overlay">Blast Off</div></div>
+                <div class="gallery-item hoverable"><img src="dayfall.png" class="zoomable" alt="Gallery"><div class="gallery-overlay">Dayfall</div></div>
+                <div class="gallery-item hoverable"><img src="inthepines.png" class="zoomable" alt="Gallery"><div class="gallery-overlay">In The Pines</div></div>
+            </div>
+        </section>
+
+        <section id="design" class="page-section">
+            <div class="heading-container"><h2>Design</h2></div>
+            <div class="modern-gallery fade-in-section">
+                <div class="gallery-item hoverable"><img src="boylife.png" class="zoomable" alt="Boylife Concept"><div class="gallery-overlay">Boylife Concept</div></div>
+                <div class="gallery-item hoverable"><img src="mac-swimming.png" class="zoomable" alt="Mac Miller Swimming Concept"><div class="gallery-overlay">Mac Miller - Swimming</div></div>
+                <div class="gallery-item hoverable"><img src="mac-wonder.png" class="zoomable" alt="Mac Miller Balloon Concept"><div class="gallery-overlay">Mac Miller - Balloon</div></div>
+                <div class="gallery-item hoverable"><img src="alexg-race.png" class="zoomable" alt="Alex G Race Concept"><div class="gallery-overlay">Alex G - Race</div></div>
+                <div class="gallery-item hoverable"><img src="alexg-trick.png" class="zoomable" alt="Alex G Trick Concept"><div class="gallery-overlay">Alex G - Trick</div></div>
+                <div class="gallery-item hoverable"><img src="alexg-godsave.png" class="zoomable" alt="Alex G God Save The Animals Concept"><div class="gallery-overlay">Alex G - God Save The Animals</div></div>
+                <div class="gallery-item hoverable"><img src="mindless.png" class="zoomable" alt="Mindless"><div class="gallery-overlay">Mindless</div></div>
+                <div class="gallery-item hoverable"><img src="wereopen.png" class="zoomable" alt="We're Open"><div class="gallery-overlay">We're Open</div></div>
+            </div>
+        </section>
+
+        <section id="contact" class="page-section">
+            <div class="heading-container"><h2>Contact</h2></div>
+            <div class="contact-layout fade-in-section">
+                <div class="bio-section">
+                    <img src="meagain.png" alt="Photographer Bio" id="bio-image" class="hoverable">
+                    <h3>Hello.</h3>
+                    <p>I'm Aaron and I hope you enjoy my visual design and photography portfolio.</p>
+                </div>
+                <div class="form-section">
+                    <form action="#" method="POST">
+                        <input type="text" name="name" placeholder="Name" required class="hoverable">
+                        <input type="email" name="email" placeholder="Email" required class="hoverable">
+                        <textarea name="message" placeholder="Message" required class="hoverable"></textarea>
+                        <button type="submit" class="hoverable">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="marquee-container hoverable">
+        <div class="marquee-content">
+            <span>AVAILABLE FOR FREELANCE WORK &bull; LET'S COLLABORATE &bull; AVAILABLE FOR FREELANCE WORK &bull; LET'S COLLABORATE &bull; AVAILABLE FOR FREELANCE WORK &bull; LET'S COLLABORATE &bull; AVAILABLE FOR FREELANCE WORK &bull; LET'S COLLABORATE &bull; </span>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Sleek Portfolio. All rights reserved.</p>
+        <p>Designed with striking contrast. <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="hoverable">Back to Top</a></p>
+    </footer>
+
+    <div id="lightbox">
+        <span id="close-lightbox" class="hoverable">&times;</span>
+        <img id="lightbox-img" src="" alt="Enlarged View">
+    </div>
+
+    <script>
+        // --- CUSTOM CURSOR LOGIC ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorOutline = document.querySelector('.cursor-outline');
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = `${e.clientX}px`; cursorDot.style.top = `${e.clientY}px`;
+            cursorOutline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 500, fill: "forwards" });
+        });
+
+        const observer = new MutationObserver(() => bindHoverables());
+        observer.observe(document.body, { childList: true, subtree: true });
+        function bindHoverables() {
+            document.querySelectorAll('.hoverable, a, button, input, textarea, .zoomable, .gallery-item').forEach(el => {
+                if(!el.dataset.hoverBound) {
+                    el.addEventListener('mouseenter', () => cursorOutline.classList.add('hovering'));
+                    el.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovering'));
+                    el.dataset.hoverBound = "true";
+                }
+            });
+        }
+        bindHoverables();
+
+        // --- MAGNETIC NAV LINKS ---
+        document.querySelectorAll('nav a').forEach(link => {
+            link.addEventListener('mousemove', (e) => {
+                const rect = link.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                link.style.transform = `translate(${x * 0.3}px, ${y * 0.3}px) translateY(-2px)`;
+            });
+            link.addEventListener('mouseleave', () => link.style.transform = 'translate(0px, 0px)');
+        });
+
+        // --- SCROLL ANIMATION ---
+        const appearOnScroll = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add('is-visible');
+                observer.unobserve(entry.target);
+            });
+        }, { threshold: 0.15, rootMargin: "0px 0px -50px 0px" });
+
+        function resetAnimations() {
+            document.querySelectorAll('.fade-in-section').forEach(fader => { 
+                fader.classList.remove('is-visible'); 
+                appearOnScroll.observe(fader); 
+            });
+        }
+
+        // --- NAVIGATION ---
+        function navigate(pageId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('nav a').forEach(l => l.classList.remove('active-link'));
+            document.getElementById('link-' + pageId).classList.add('active-link');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(resetAnimations, 100);
+        }
+        setTimeout(resetAnimations, 100);
+
+        // --- SLIDESHOW ---
+        let currentSlide = 0; 
+        const slides = document.querySelectorAll('.slide');
+        if(slides.length > 0) {
+            setInterval(() => {
+                slides[currentSlide].classList.remove('active-slide');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active-slide');
+            }, 3000);
+        }
+
+        // --- LIGHTBOX ---
+        const lightbox = document.getElementById('lightbox'), lightboxImg = document.getElementById('lightbox-img');
+        document.querySelectorAll('.zoomable').forEach(img => {
+            img.addEventListener('click', (e) => {
+                e.preventDefault(); lightboxImg.src = img.src; lightbox.style.display = 'flex'; 
+            });
+        });
+        document.getElementById('close-lightbox').addEventListener('click', () => lightbox.style.display = 'none');
+        lightbox.addEventListener('click', (e) => { if (e.target === lightbox) lightbox.style.display = 'none'; });
+    </script>
+</body>
+</html>
